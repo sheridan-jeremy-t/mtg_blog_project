@@ -14,16 +14,19 @@ class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('title',)}
     ordering = ('created',)
     filter_horizontal = ('topics',)
+
 class CommentInline(admin.TabularInline):
     model = Comment
     fields = ('name','email', 'text', 'approved')
     readonly_fields = ('name', 'email', 'text')
     extra = 0
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('name', 'post', 'created', 'approved')
     list_filter = ('approved', 'created')
     search_fields = ('name', 'email', 'text')
+
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
