@@ -1,9 +1,7 @@
-import pytest
+from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-from mtg_blog.models import Comment
+from mtg_blog.models import Comment, Post
 
 class TestCommentModel(TestCase):
     def setUp(self):
@@ -41,20 +39,23 @@ class TestCommentModel(TestCase):
         )
         expected_str = f'Comment by Standard Player on {self.post.title}'
         self.assertEqual(str(comment), expected_str)
+
     def test_comment_default_ordering(self):
         """Test comment default ordering by newest first"""
-        comment1 = Comment.objects.create(
-            post = self.post,
-            name = 'First Commenter',
-            email = 'first@example.com',
-            text = 'First comment about sideboard choices'
-        )
-        comment2 = Comment.objects.create(
-            post=self.post,
-            name='Second Commenter',
-            email='second@example.com',
-            text='Second comment about sideboard choices'
-        )
+        with freeze_time("2025-07-14 09:00:00"):
+            comment1 = Comment.objects.create(
+                post = self.post,
+                name = 'First Commenter',
+                email = 'first@example.com',
+                text = 'First comment about sideboard choices',
+            )
+        with freeze_time("2025-07-14 10:00:00"):
+            comment2 = Comment.objects.create(
+                post=self.post,
+                name='Second Commenter',
+                email='second@example.com',
+                text='Second comment about sideboard choices',
+            )
         comments = Comment.objects.all()
         self.assertEqual(comments[0], comment2) #most recent first
         self.assertEqual(comments[1], comment1)

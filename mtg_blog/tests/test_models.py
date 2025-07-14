@@ -1,8 +1,6 @@
-import pytest
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from mtg_blog.models import Post, Topic
 
 class TestTopicModel(TestCase):
